@@ -1,7 +1,7 @@
 # R and Julia
 
-    Author: Hans W. Borchers
-    Date:   October 13, 2017
+*Hans W. Borchers*  
+*Fri, October 13, 2017*
 
 
 ## Julia Installation
