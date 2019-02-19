@@ -1,12 +1,12 @@
-# R and Julia
+# Note on R and Julia
 
 *Hans W. Borchers*  
-*Fri, October 13, 2017*
+*2019-02-19*
 
 
-# Introduction
+## Introduction
 
-## Julia Installation
+### Julia Installation
 
 We assume the user has installed a newer version of R, such as R >= 3.5.1, and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.1.0 (as of January 2019) and can be downloaded from the Julia home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
 
@@ -36,7 +36,7 @@ To be used, *Pkg* itself needs to be loaded with `using Pkg` and then type `Pkg.
 There is also a help mode that can be raised by typing the question mark `?`.
 
 
-## JuliaCall Installation
+### JuliaCall Installation
 
 *JuliaCall* is an R package, available on CRAN, by Changcheng Li. We would recommend to always install the newest version of *JuliaCall* from Github. The *devtools* R package provides the `install_github()` routine to do that for us if we know the name of the Github repository.
 
@@ -64,7 +64,7 @@ julia_setup()
 All command in *JuliaCall* start with a `julia_` prefix. It is also possible to call these commands with a `jl$` prefix by assigning the setup command to the variable `jl` (or any other valid name) with `jl <- julia_setup()`, if the user prefers that style.
 
 
-## Simple Julia Commands
+### Simple Julia Commands
 
 To check whether Julia is working from R, type in a simple command such as calling the Julia square root funtion on 2.0 by applying `julia_call()` with the obvious meaning,
 
@@ -125,7 +125,7 @@ julia_assign("gamma", 0.57721566490153286)
 
 In Julia, this will assign to the variable name `gamma` the value of the Euler-Mascheroni or Gamma constant. 
 
-## Julia Packages
+### Julia Packages
 
 The user can start Julia and install and load packages. After restarting R and the *JuliaCall* library, these packages are available. It is also possible to install and load Julia libraries with *JuliaCall* functions, as a kind of warm start.
 
@@ -142,7 +142,7 @@ The `julia_library()` command will load an installed package, that is, in Julia 
 Be prepared that this may take its time as loading libraries may be slow in Julia, especially if the  package is newly installed and has to be precompiled (JIT compilation).
 
 
-## Getting Help
+### Getting Help
 
 To get help for a Julia function use `julia_help()`. The quality of help in Julia is quite diverse, some functions have virtually no documentation (yet), others are documented quite well. The result of `julia_help("sqrt")` is
 
@@ -166,9 +166,9 @@ and the Julia complex number `1im` has been converted to the R representation `1
 In general, reading help for Julia functions through the `julia_help()` interface is not recommended as some of the formatting is lost and the help is difficult to read. Instead, read the documentation on `docs.julialang.org`, or open a terminal where Julia runs and look at the help page there.
 
 
-# Computing With JuliaCall
+## Computing With JuliaCall
 
-## Numbers, Vectors, and Matrices
+### Numbers, Vectors, and Matrices
 
 We have already seen simple commands for interacting between R and Julia. `julia_eval()` and `julia_command()` evaluate a string containing a correct Julia expression and return the result to R. `julia_call()` accepts a Julia function name as string plus R variables and returns the result when applying the function in Julia.
 
@@ -215,7 +215,7 @@ julia_eval("x")
 We apply the `\` operator in Julia that solves the linear system, the same as in MATLAB. Backslash being the escape character, we have to double it in a string.
 
 
-## Julia Functions
+### Julia Functions
 
 Of course, all the common mathematical functions are available in Julia, like trigonometric or exponential functions or logarithms, etc.
 
@@ -291,7 +291,7 @@ julia_command("I, err = quadgk(runge, -1, 1)")
 We will later display the function graph with Julia plotting routines.
 
 
-## More Function Magic
+### More Function Magic
 
 Imagine there is a file `miscellaneous.jl` in the working directory that contains the following definition of a function in Julia. This `agm` function calculates the algebraic-geometric mean of two numbers `a` and `b`.
 
@@ -343,12 +343,12 @@ julia_command("G = 1 / agm(b1, sqrt(b2), tol = 1e-50)")
 About 50 digits of this expression shall be correct. The question remains how these digits can be saved for further treatment in R. Assigning it to an R variable will loose will get those for 64-bit floats.
 
 
-## Plotting Functions
+### Plotting Functions
 
 
-# Applications
+## Applications
 
-## Unconstrained Optimization
+### Unconstrained Optimization
 
 Minimize the Rosenbrock function in 10 dimensions. This test function is, e.g., defined in the *adagio* package, together with its exact gradient function. The starting point shall be $x0 = (0.01, \ldots , 0.01)$.
 
@@ -414,7 +414,7 @@ xmin
 Because no gradient is supplied, the gradient is automatically computed applying the central-difference formula. Most of the time this is sufficient for getting good results.
 
 
-## Automatic Differentiation
+### Automatic Differentiation
 
 *Automatic Differentiation* is a "technique to numerically compute the derivative of a function specified by a computer program". Julia provides several approaches (forward, backward, ...) to automatic differentiation. Of course, these approaches cannot be applied to functions not defined in Julia or C functions integrated into Julia.
 
@@ -463,7 +463,7 @@ H2
 The maximum deviation here is smaller than `1e-11`, but still we see that automatic differentiation returns an exact result within floating-point arithmetic.
 
 
-## Special Functions and Numbers
+### Special Functions and Numbers
 
 There are many special mathematical and physical functions that are not available in R, but have implementations in Julia. Other such special functions are present in R, but do not have sufficient accuracy (exactness in floating-point arithmetic). If such a special function is needed in high accuracy, Julia may come to help.
 
@@ -505,7 +505,7 @@ factorize(as.bigz(N))
 Of course, factorization can also be done in Julia after loading the *Primes* package, with `julia_eval("factor(BigInt(N))")`.
 
 
-## Optimization Modeling: *JuMP* and *Ipopt*
+### Optimization Modeling: *JuMP* and *Ipopt*
 
 Task: Minimize the Rosenbrock function in 10 dimensions with constraints `0 <= x[i] <= 0.5`.
 
@@ -572,13 +572,12 @@ julia_eval("getvalue(x)")
 ##  [6] 0.0102120052 0.0102084109 0.0102042121 0.0100040851 0.0001000822
 ```
 
+### Differential Equations Solving
 
-## Differential Equations Solving
 
+## System Specifics
 
-# System Specifics
-
-## Timing
+### Timing
 
 We want to compare some timings of R and Julia functions and also see how much overhead we get when calling functions in Julia. A suggested test function is 'trapezoidal integration', in R available as `pracma::trapz`. Converting this function to Julia and polish it for JIT compilation, the function could look like:
 
