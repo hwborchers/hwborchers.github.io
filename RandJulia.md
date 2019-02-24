@@ -1,7 +1,7 @@
 ---
 title: "Note on R and Julia"
 author: "Hans W Borchers"
-date: "2019-02-19"
+date: "2019-02-24"
 output:
   html_document:
     toc: TRUE
@@ -174,6 +174,7 @@ and the Julia complex number `1im` has been converted to the R representation `1
 
 In general, reading help for Julia functions through the `julia_help()` interface is not recommended as some of the formatting is lost and the help is difficult to read. Instead, read the documentation on `docs.julialang.org`, or open a terminal where Julia runs and look at the help page there.
 
+----
 
 ## Computing With JuliaCall
 
@@ -355,7 +356,52 @@ About 50 digits of this expression shall be correct. The question remains how th
 ### Plotting Functions
 
 
+----
+
 ## Applications
+
+### Linear Algebra
+
+The *Moler matrix* is a symmetric mtrix with exactly one very small eigenvalue. It is well suited for testing eigenvalue computations. In R a Moler matrix of size `nxn` can be generated through the *pracma* function `moler(n)`. Let's try to find out its small eigenvalue for dimension `n=100`.
+
+```r
+M <- pracma::moler(100)
+M
+##        [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] ...
+##   [1,]    1   -1   -1   -1   -1   -1   -1   -1   -1    -1 ...
+##   [2,]   -1    2    0    0    0    0    0    0    0     0 ...
+##   [3,]   -1    0    3    1    1    1    1    1    1     1 ...
+##  ...
+## [100,]   -1    0    1    2    3    4    5    6    7     8 ...
+
+( e <- eigen(M)$values )
+##  [1] 3.934277e+03 4.390118e+02 1.593905e+02 8.235182e+01  ...
+## [97] 2.250558e+00 2.250248e+00 2.250062e+00 5.473381e-14
+```
+
+This last small eigenvalue is certainly incorrect -- but how much? Knowing that the determinant of a Moler matrix is 1 and assuming all the bigger eigenvalues are calculated correctly, an estimate for the smallest eigenvalue would be
+
+```r
+print(1.0/prod(e[1:99]), digits=16)
+## [1] 5.600713750073471e-60
+```
+
+Changing `M` with *Rmpfr* to a high-precision object does not help, as `eigen()` does not recognize multiple precision numbers. But also Julia's `eigvals()` function does not work with "big" numbers, it returns the same eigenvalues as above.
+
+Instead, we make use of the function with the same name from the *GenericLinearAlgebra* Julia package. First we assign the Julia variable `M` to our matrix `M` in R, then convert it to a matrix of "big" numbers and apply the eigenvalue function.
+
+```r
+    julia_command("using GenericLinearAlgebra;")
+    
+    jl$assign("M", M)
+    jl$command("e = eigvals(Hermitian(big.(M)));")
+
+    jl$command("println(e[1])")
+    ## 5.60071375007503416508581022876389348658607158043730...e-60
+```
+
+This is really a small eigenvalue, especially compared to the other eigenvalues. We can see that the estimated eigenvalue above was exact up to 12 digits.
+
 
 ### Unconstrained Optimization
 

@@ -11,7 +11,7 @@
 
 <meta name="author" content="Hans W Borchers" />
 
-<meta name="date" content="2019-02-19" />
+<meta name="date" content="2019-02-24" />
 
 <title>Note on R and Julia</title>
 
@@ -1643,7 +1643,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Note on R and Julia</h1>
 <h4 class="author"><em>Hans W Borchers</em></h4>
-<h4 class="date"><em>2019-02-19</em></h4>
+<h4 class="date"><em>2019-02-24</em></h4>
 
 </div>
 
@@ -1663,6 +1663,7 @@ $(document).ready(function () {
 <li><a href="#plotting-functions">Plotting Functions</a></li>
 </ul></li>
 <li><a href="#applications">Applications</a><ul>
+<li><a href="#linear-algebra">Linear Algebra</a></li>
 <li><a href="#unconstrained-optimization">Unconstrained Optimization</a></li>
 <li><a href="#automatic-differentiation">Automatic Differentiation</a></li>
 <li><a href="#special-functions-and-numbers">Special Functions and Numbers</a></li>
@@ -1687,7 +1688,7 @@ $(document).ready(function () {
    _ _   _| |_  __ _   |  Type &quot;?&quot; for help, &quot;]?&quot; for Pkg help.
   | | | | | | |/ _` |  |
   | | |_| | | | (_| |  |  Version 1.1.0 (2019-01-21)
- _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
+ _/ |\__&#39;_|_|_|\__&#39;_|  |  Official https://julialang.org/ release
 |__/                   |</code></pre>
 <p>After loading the <em>Pkg</em> package with <code>using Pkg</code>, the command <code>Pkg.add()</code> will download and install Julia packages (in the <code>.julia</code> subdirectory of your home directory) once, and <code>using &lt;pkg&gt;</code> will load these into the active session, just like <code>library()</code> in R. For instance, <em>RCall</em> will enable Julia to call R routines or get access to R objects.</p>
 <p>To be used, <em>Pkg</em> itself needs to be loaded with <code>using Pkg</code> and then type <code>Pkg.add(&quot;RCall&quot;)</code>. It is easier to apply the ‘]’ operator that will change the console mode to accept package commands. This mode can be left by pressing the <code>&lt;del&gt;</code> key.</p>
@@ -1777,6 +1778,7 @@ The prefix operator `\sqrt` is equivalent to `sqrt`.
 ## [1] 0+1i</code></pre>
 <p>and the Julia complex number <code>1im</code> has been converted to the R representation <code>1i</code>. (In Julia an expression “constant times a variable” <code>5*x</code> can also be written as shorthand <code>5x</code>.)</p>
 <p>In general, reading help for Julia functions through the <code>julia_help()</code> interface is not recommended as some of the formatting is lost and the help is difficult to read. Instead, read the documentation on <code>docs.julialang.org</code>, or open a terminal where Julia runs and look at the help page there.</p>
+<hr />
 </div>
 </div>
 <div id="computing-with-juliacall" class="section level2">
@@ -1788,10 +1790,10 @@ The prefix operator `\sqrt` is equivalent to `sqrt`.
 A &lt;- matrix(runif(9), 3, 3)
 
 julia_assign(&quot;a&quot;, A)    # assign a Julia name to an R variable
-julia_exists(&quot;a&quot;)       # variable 'a' exists in Julia
+julia_exists(&quot;a&quot;)       # variable &#39;a&#39; exists in Julia
 ## TRUE
 
-julia_call(&quot;typeof&quot;, a) # what is the type of object 'a'?
+julia_call(&quot;typeof&quot;, a) # what is the type of object &#39;a&#39;?
 ## Julia Object of type DataType.
 ## Float64
 
@@ -1888,10 +1890,40 @@ julia_command(&quot;G = 1 / agm(b1, sqrt(b2), tol = 1e-50)&quot;)
 </div>
 <div id="plotting-functions" class="section level3">
 <h3>Plotting Functions</h3>
+<hr />
 </div>
 </div>
 <div id="applications" class="section level2">
 <h2>Applications</h2>
+<div id="linear-algebra" class="section level3">
+<h3>Linear Algebra</h3>
+<p>The <em>Moler matrix</em> is a symmetric mtrix with exactly one very small eigenvalue. It is well suited for testing eigenvalue computations. In R a Moler matrix of size <code>nxn</code> can be generated through the <em>pracma</em> function <code>moler(n)</code>. Let’s try to find out its small eigenvalue for dimension <code>n=100</code>.</p>
+<pre class="r"><code>M &lt;- pracma::moler(100)
+M
+##        [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] ...
+##   [1,]    1   -1   -1   -1   -1   -1   -1   -1   -1    -1 ...
+##   [2,]   -1    2    0    0    0    0    0    0    0     0 ...
+##   [3,]   -1    0    3    1    1    1    1    1    1     1 ...
+##  ...
+## [100,]   -1    0    1    2    3    4    5    6    7     8 ...
+
+( e &lt;- eigen(M)$values )
+##  [1] 3.934277e+03 4.390118e+02 1.593905e+02 8.235182e+01  ...
+## [97] 2.250558e+00 2.250248e+00 2.250062e+00 5.473381e-14</code></pre>
+<p>This last small eigenvalue is certainly incorrect – but how much? Knowing that the determinant of a Moler matrix is 1 and assuming all the bigger eigenvalues are calculated correctly, an estimate for the smallest eigenvalue would be</p>
+<pre class="r"><code>print(1.0/prod(e[1:99]), digits=16)
+## [1] 5.600713750073471e-60</code></pre>
+<p>Changing <code>M</code> with <em>Rmpfr</em> to a high-precision object does not help, as <code>eigen()</code> does not recognize multiple precision numbers. But also Julia’s <code>eigvals()</code> function does not work with “big” numbers, it returns the same eigenvalues as above.</p>
+<p>Instead, we make use of the function with the same name from the <em>GenericLinearAlgebra</em> Julia package. First we assign the Julia variable <code>M</code> to our matrix <code>M</code> in R, then convert it to a matrix of “big” numbers and apply the eigenvalue function.</p>
+<pre class="r"><code>    julia_command(&quot;using GenericLinearAlgebra;&quot;)
+    
+    jl$assign(&quot;M&quot;, M)
+    jl$command(&quot;e = eigvals(Hermitian(big.(M)));&quot;)
+
+    jl$command(&quot;println(e[1])&quot;)
+    ## 5.60071375007503416508581022876389348658607158043730...e-60</code></pre>
+<p>This is really a small eigenvalue, especially compared to the other eigenvalues. We can see that the estimated eigenvalue above was exact up to 12 digits.</p>
+</div>
 <div id="unconstrained-optimization" class="section level3">
 <h3>Unconstrained Optimization</h3>
 <p>Minimize the Rosenbrock function in 10 dimensions. This test function is, e.g., defined in the <em>adagio</em> package, together with its exact gradient function. The starting point shall be <span class="math inline">\(x0 = (0.01, \ldots , 0.01)\)</span>.</p>
@@ -1911,7 +1943,7 @@ sol
 <p>Instead we now employ the <code>optimize()</code> function in Julia, available in its <em>Optim</em> package that we have already loaded. First, we make <code>fnRosenbrock</code> available in Julia.</p>
 <pre class="r"><code>julia_assign(&quot;fn&quot;, fn)
 julia_assign(&quot;gr&quot;, gr)
-julia_call(&quot;fn&quot;, rep(0, 10))    # is 'fn' known in Julia?
+julia_call(&quot;fn&quot;, rep(0, 10))    # is &#39;fn&#39; known in Julia?
 ## [1] 9</code></pre>
 <pre class="r"><code>julia_command(&quot;result = optimize(fn, zeros(10), BFGS())&quot;)
 ## Results of Optimization Algorithm
@@ -1921,10 +1953,10 @@ julia_call(&quot;fn&quot;, rep(0, 10))    # is 'fn' known in Julia?
 ##  * Minimum: 1.634017e-16
 ##  * Iterations: 64
 ##  * Convergence: true
-##    * |x - x'| &lt; 1.0e-32: false 
-##      |x - x'| = 3.24e-11 
-##    * |f(x) - f(x')| / |f(x)| &lt; 1.0e-32: false
-##      |f(x) - f(x')| / |f(x)| = NaN 
+##    * |x - x&#39;| &lt; 1.0e-32: false 
+##      |x - x&#39;| = 3.24e-11 
+##    * |f(x) - f(x&#39;)| / |f(x)| &lt; 1.0e-32: false
+##      |f(x) - f(x&#39;)| / |f(x)| = NaN 
 ##    * |g(x)| &lt; 1.0e-08: true 
 ##      |g(x)| = 6.12e-10 
 ##    * stopped by an increasing objective: false
@@ -1995,7 +2027,7 @@ N
 <p>Here we compute the 101th Fibonacci number. This number is too big to be representable as an integer in R, therefore we return it as a string. With the <em>gmp</em> R package we can convert this number into a big integer and find its prime factors.</p>
 <pre class="r"><code>require(gmp)
 factorize(as.bigz(N))
-## Big Integer ('bigz') object of length 2:
+## Big Integer (&#39;bigz&#39;) object of length 2:
 ## [1] 743519377    770857978613</code></pre>
 <p>Of course, factorization can also be done in Julia after loading the <em>Primes</em> package, with <code>julia_eval(&quot;factor(BigInt(N))&quot;)</code>.</p>
 </div>
