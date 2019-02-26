@@ -4,7 +4,9 @@ author: "Hans W Borchers"
 date: "2019-02-26"
 output:
   html_document:
-    toc: TRUE
+    toc: true
+    toc_float:
+      collapsed: false
     keep_md: true
     df_print: paged
   pdf_document:

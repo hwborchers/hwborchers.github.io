@@ -11,6 +11,8 @@ output:
     keep_tex: true
 ---
 
+Author: *Hans W. Borchers, Duale Hochschule BW, Mannheim*
+Date: *2019-02-26*
 
 
 ## Introduction
