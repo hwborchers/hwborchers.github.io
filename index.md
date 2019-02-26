@@ -11,7 +11,8 @@ output:
     keep_tex: true
 ---
 
-Author: *Hans W. Borchers, Duale Hochschule BW, Mannheim*
+Title: **JuliaCall: Integrating R and Julia**  
+Author: *Hans W. Borchers, Duale Hochschule BW, Mannheim*  
 Date: *2019-02-26*
 
 
@@ -190,7 +191,8 @@ To get help for a Julia function use `julia_help()`. The quality of help in Juli
 ```
 sqrt(x)
 
-Return $\sqrt{x}$. Throws [`DomainError`](@ref) for negative [`Real`](@ref) arguments. Use complex negative arguments instead.
+Return $\sqrt{x}$. Throws [`DomainError`](@ref) for negative [`Real`](@ref) arguments.
+Use complex negative arguments instead.
 The prefix operator `\sqrt` is equivalent to `sqrt`.
 ...
 ```
