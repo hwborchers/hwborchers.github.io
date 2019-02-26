@@ -1,5 +1,5 @@
 ---
-title: "Note on R and Julia"
+title: "JuliaCall: Integrating R and Julia"
 author: "Hans W Borchers"
 date: "`r Sys.Date()`"
 output:
@@ -19,9 +19,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Julia Installation
 
-We assume the user has installed a newer version of R, such as R >= 3.5.1, and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.1.0 (as of January 2019) and can be downloaded from the Julia home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
+We assume the user has installed a newer version of R, such as R >= 3.5.1, and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.1.0 (as of January 2019) and can be downloaded from the Julia language home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
 
-Some Julia packages will be needed. Though the `julia_setup` routine tries to install the necessary packages, it is preferable to download and install these packages directly in Julia, and before Julia is first called from R.
+Some Julia packages will be needed. Though the `julia_setup` routine tries to install the necessary packages, it might be preferable to download and install some packages directly from Julia, and before Julia is called the first time from R.
 
     > julia
        _       _ _(_)_     |  Documentation: https://docs.julialang.org
@@ -34,7 +34,7 @@ Some Julia packages will be needed. Though the `julia_setup` routine tries to in
 
 After loading the *Pkg* package with `using Pkg`, the command `Pkg.add()` will download and install Julia packages (in the `.julia` subdirectory of your home directory) once, and `using <pkg>` will load these into the active session, just like `library()` in R. For instance, *RCall* will enable Julia to call R routines or get access to R objects.
 
-To be used, *Pkg* itself needs to be loaded with `using Pkg` and then type `Pkg.add("RCall")`. It is easier to apply the ']' operator that will change the console mode to accept package commands. This mode can be left by pressing the `<del>` key.
+To be used, *Pkg* itself needs to be loaded with `using Pkg`, and then type `Pkg.add("RCall")`. It is easier to apply the ']' operator that will change the console mode to accept package commands. This mode will be left by pressing the `<del>` key.
 
     julia> ]
     (v1.1) pkg> add RCall
@@ -62,8 +62,8 @@ julia_setup()
 ## Finish loading setup script for JuliaCall.
 ```
 
-This only works if the `julia` command is defined in your path. The path, e.g., to a different Julia version can be given to `julia_setup`
-as an option or argument. The following code starts a JuliaPro installation instead of Julia from **julialang.org**.
+This only works if the `julia` command is defined in your path. The path, e.g., to a different Julia version can be added to `julia_setup()`
+as an option or argument. The following code starts a JuliaPro installation from **JuliaComputing** instead of Julia from **julialang.org**.
 
 ```r
 options(JULIA_HOME = "<path-to-juliapro>/julia/bin")
@@ -72,10 +72,10 @@ julia_setup()
 # julia_setup(JULIA_HOME = "<path-to-juliapro>/julia/bin")
 ```
 
-All command in *JuliaCall* start with a `julia_` prefix. It is also possible to call these commands with a `jl$` prefix by assigning the setup command to the variable `jl` (or any other valid name) with `jl <- julia_setup()`, if the user prefers that style.
+All commands in *JuliaCall* start with a `julia_` prefix. It is also possible to call these commands with a `jl$` prefix by assigning the setup command to the variable `jl` (or any other valid name) with `jl <- julia_setup()` -- if the user prefers that kind of style.
 
 
-### Simple Julia Commands
+### Basic Julia Commands
 
 To check whether Julia is working from R, type in a simple command such as calling the Julia square root funtion on 2.0 by applying `julia_call()` with the obvious meaning,
 
@@ -84,23 +84,42 @@ julia_call("sqrt", 2.0)
 ## [1] 1.414214
 ```
 
-Here the Julia square root function `sqrt` is applied to the number `2.0`, the argument taken from R and converted to a Julia object, a number in this case, before applying the square root. The value is returned to R and can be assigned to a variable.
+Here the Julia square root function `sqrt` is applied to the number `2.0`. The argument is taken from R and converted to a Julia object, a number in this case, before applying the square root. The value is returned to R as an R object and can be assigned to a variable. In this example, in Julia no values or variables are generated.
 
-Or use `julia_eval` on a complete Julia expression. Julia commands will be separated with `;`, and the value of the last command returned.
+To execute a Julia command, use `julia_command`. It can run a series of Julia command, separated by semicolons and will, or will not, print the last Julia output. 
 
 ```r
-julia_eval("a = sqrt(2.0); println(a)")
+julia_command("a = sqrt(2.0)")
 ## 1.4142135623730951
-## NULL
+
+# or
+julia_command("a = sqrt(2.0);")   # no output printed
 ```
 
-Here `println()` prints the result as we would see it on the Julia console, and its return value is `NULL`. Apply `julia_command()` if you don't want to get back a value.
+The Julia variable `a` will be generated and the Julia output of the last command will be printed on the console. To completely suppress the output, append a semicolon to the last command. `julia_command` does *not* return a value to R -- more to the point, `NULL` is returned invisibly.
+
+To get the value of a Julia variable back to R, use the `julia_eval` command. It will convert the value or Julia object to an R object and print it or assign it to an R variable.
 
 ```r
-julia_command("a = sqrt(2.0);")
+a <- julia_eval("a = sqrt(2.0)")
+a
+## [1] 1.414214
 ```
 
-Watch out for the semicolon, it is needed to suppress the return value. (Actually, `NULL` is returned invisibly.)
+You can apply `julia_eval` on a sequence of Julia expression, separating commands with semicolons `;`. The value of the last command will be returned, whether there is a semicolon at the end or not.
+
+Finally, there is `julia_assign`, another useful operator. It takes an R object like a number, vector, matrix, etc., turns it into a Julia object and assigns a variable name to it. This variable can then be used in subsequent Julia commands.
+
+```r
+julia_assign("gamma", 0.57721566490153286)
+julia_command("bitstring(gamma")
+## "0011111111100010011110001000110011111100011011111011011000011001"
+```
+
+In Julia, this will assign to the variable name `gamma` the value of the Euler-Mascheroni or Gamma constant. Function `bitstring` prints the "literal bit representation of a number".
+
+
+### The Julia Console
 
 It is possible to start the Julia REPL within R with the `julia_console()` command. The variable `a` is still available.
 
@@ -117,7 +136,7 @@ julia> exit
 Exiting Julia console.
 ```
 
-This returns to the R command. Note that in Julia the output of a command such as `e = exp(1)` is suppressed by appending a semicolon (as in MATLAB or Octave). `e` still exists and can be used in R.
+This returns control to the R command. Note again that in Julia the output of a command such as `e = exp(1)` is suppressed by appending a semicolon (as in MATLAB or Octave). `e` still exists and can be used in R.
 
 ```r
 julia_exists("e")
@@ -128,13 +147,8 @@ e
 ## [1] 2.718282
 ```
 
-`julia_assign()` is another useful operator, it takes an R object like a number, vector, matrix, etc., makes it accessible as a Julia object and assigns a Julia name to it.
+The `julia_console` functionality is especially useful when you have some knowledge about working with Julia. Writing Julia code is much easier in this environment, and when exiting the results are still available in R.
 
-```r
-julia_assign("gamma", 0.57721566490153286)
-```
-
-In Julia, this will assign to the variable name `gamma` the value of the Euler-Mascheroni or Gamma constant. 
 
 ### Julia Packages
 
@@ -151,6 +165,18 @@ julia_library("Optim")                      # julia> using Optim
 The `julia_library()` command will load an installed package, that is, in Julia the command `using Optim` will be initiated. (Note that all Julia package names start with a capital letter.)
 
 Be prepared that this may take its time as loading libraries may be slow in Julia, especially if the  package is newly installed and has to be precompiled (JIT compilation).
+
+Some packages worth looking at are:
+
+  - **Plots** for visualization and data analysis;
+  - **DifferentialEquations** with high-performance solvers for differential equations;
+  - **ForwardDiff** providing Automatic Differentiation (AD) in Julia;
+  - **JuMP**, a modeling language for mathematical optimization;
+  - **Image**, an image processing library;
+  - **GLM** for generalized and linear models; or
+  - **DataFrames** for working with tabular data.
+
+The **GR** package provides a framework, based on the "Grammar of Graphics", for visualisation applications. Several packages exist for deep learning (**Mocha**, **Flux**, **Knet**, **MXNet**, **TensorFlow**, etc.). See the [Julia Observer](https://juliaobserver.com/packages/) for some of the highest-ranked packages, listed by categories.
 
 
 ### Getting Help
@@ -172,17 +198,16 @@ julia_eval("sqrt(-1+0im)")
 ## [1] 0+1i
 ```
 
-and the Julia complex number `1im` has been converted to the R representation `1i`. (In Julia an expression "constant times a variable" `5*x` can also be written as shorthand `5x`.) 
+and the Julia complex number `1im` has been converted to the R representation `1i`. (In Julia an expression "a number times a variable" `5*x` can also be written as shorthand `5x`.) 
 
-In general, reading help for Julia functions through the `julia_help()` interface is not recommended as some of the formatting is lost and the help is difficult to read. Instead, read the documentation on `docs.julialang.org`, or open a terminal where Julia runs and look at the help page there.
+In general, reading help for Julia functions through the `julia_help()` interface is not recommended as some of the formatting is lost and the help is difficult to read. Instead, read the newest documentation on [docs.julialang.org](https://docs.julialang.org/en/), or open a terminal where Julia runs and look at the help page there.
 
-----
 
 ## Computing With JuliaCall
 
 ### Numbers, Vectors, and Matrices
 
-We have already seen simple commands for interacting between R and Julia. `julia_eval()` and `julia_command()` evaluate a string containing a correct Julia expression and return the result to R. `julia_call()` accepts a Julia function name as string plus R variables and returns the result when applying the function in Julia.
+We have already seen simple commands for interacting between R and Julia. `julia_eval()` and `julia_command()` evaluate a string containing a correct Julia expression and return the result to R. `julia_call()` accepts a Julia function name as string plus R variables and returns the result when applying the function in Julia. And `julia_assign` converts an R object and makes it accessible to Julia functions.
 
 ```r
 set.seed(1001)
@@ -200,7 +225,7 @@ julia_eval("det(a)")
 ## [1] 0.01609354
 ```
 
-Numbers in R like `1` or `1.0` are floating point and will be converted with `julia_assign()` to floating point numbers in Julia. If a Julia function requires natural numbers as arguments, think of defining them in R with the `L` notation.
+Numbers in R like `1` or `1.0` are floating point and will be converted with `julia_assign()` to floating point numbers in Julia. If a Julia function requires natural numbers as arguments, think of defining them in R with the 'L' notation.
 
 For instance, generate 10 random numbers with
 
@@ -209,7 +234,7 @@ julia_call("rand", 10L)
 ## [1] 0.8045609 ...
 ```
 
-while `julia_call("rand", 10L)` will throw an error -- with a quite long error message. Again, `julia_eval("rand(10)")` would be okay, as in Julia `10` is an integer and not equal to the floating-point number `10.0`.
+while `julia_call("rand", 10)` will throw an error -- with quite a long error message. Again, `julia_eval("rand(10)")` would be okay, as in Julia `10` is an integer and not equal to the floating-point number `10.0`.
 
 Vectors and matrices in R are transformed to vectors and matrices of the same length and dimension in Julia. We will solve a system of linear equations in Julia, taking vector and matrix from R. For simplicity, take the same variable names in R and Julia.
 
@@ -236,7 +261,7 @@ julia_eval("sin(pi/2)")
 ## [1] 1
 ```
 
-But we have to be careful about applying Julia functions to vectors (or matrices, etc.) because these functions are *not* vectorized by default. Instead, we can use the *dot* notation of Julia. If `f` is a function, then for a vector `x` the expression `f.(x)` will *broacast* the function over the vector, that is apply it to each element of the vector and generate a vector of results.
+We have to be careful about applying Julia functions to vectors (or matrices, etc.) because these functions are *not* vectorized by default. Instead, we can use the *dot* notation of Julia. If `f` is a function, then for a vector `x` the expression `f.(x)` will *broacast* the function over the vector, that is apply it to each element of the vector and generate a vector of results.
 
 ```r
 julia_command("x = [0, pi/4, pi/2, pi];")
@@ -263,14 +288,14 @@ integrate(fRunge, -1, 1)
 ## 0.5493603 with absolute error < 2.1e-06
 ```
 
-To make this function callable in Julia we have to tell Julia where to find and how to call the R function. Let us give it the variable name `jlRunge`, that is
+To make this function callable in Julia we have to tell Julia where to find and how to call the R function. Let us give it the same variable name `fRunge`, that is
 
 ```r
-julia_assign("jlRunge", fRunge)
-julia_call("jlRunge", c(-1, -0-5, 0, 0.5, 1))
+julia_assign("fRunge", fRunge)
+julia_call("fRunge", c(-1, -0-5, 0, 0.5, 1))
 ## [1] 0.03846154 0.13793103 1.00000000 0.13793103 0.03846154
 
-julia_eval("jlRunge([-1.0, -0.5, 0, 0.5, 1.0])")
+julia_eval("fRunge([-1.0, -0.5, 0, 0.5, 1.0])")
 ## [1] 0.03846154 0.13793103 1.00000000 0.13793103 0.03846154
 ```
 
@@ -286,21 +311,29 @@ julia_eval("[I, err]")
 ## [1] 5.493603e-01 1.058539e-09
 ```
 
-We could have defined the Runge function in Julia directly. As a function it is a one-liner, a shorthand notation for such cases is available in Julia.
+We could have defined the Runge function in Julia directly. As a function it is a one-liner, a shorthand notation for such cases is available in Julia by simply formulating it in its mathematical form `f(x) = ...`.
 
 ```r
 julia_command("runge(x) = 1 / (1 + (5*x)^2)")
 ## runge (generic function with 1 method)
 ```
 
-One note of caution. Our new function `runge` is *not* vectorized: Applying it to a vector `[-1.0, -0.5, 0, 0.5, 1.0]` will raise a `MethodError`. Now we can integrate it as a pure Julia function (Integration routines in Julia do not request the integrand to be vectorized.)
+One note of caution. Our new function `runge` is *not* vectorized: Applying it to a vector `[-1.0, -0.5, 0, 0.5, 1.0]` will raise a `MethodError`.
+
+Now we can integrate it as a pure Julia function (Integration routines in Julia do not request the integrand to be vectorized.)
 
 ```r
 julia_command("I, err = quadgk(runge, -1, 1)")
 ## (0.5493603067780064, 1.0585390480821744e-9)
 ```
 
-We will later display the function graph with Julia plotting routines.
+Functions without an associated variable names, so-called 'anonymous functions', are defined with the `->` operator, similar to one-liner functions. Instead of defining `runge`, integrate it as an anonymous function.
+
+```r
+julia_command("I, err = quadgk(x -> 1/(1 + (5*x)^2), -1, 1)")
+## (0.5493603067780064, 1.0585390480821744e-9)
+```
+
 
 
 ### More Function Magic
@@ -325,7 +358,7 @@ julia_exists("agm")
 [1] TRUE
 ```
 
-For instance, $1 / agm(1, \sqrt{2})$ is the so-called *Gauss constant* and has an important relation to elliptic integrals.
+For instance, `1/agm(1, sqrt(2.0)` is the so-called *Gauss constant* and has an important relation to elliptic integrals.
 
 ```r
 G = 1 / julia_call("agm", 1.0, sqrt(2.0), 1e-15)
@@ -343,7 +376,7 @@ julia_command("agm.(1, [0.5, 1.0, 1.5])")
 ##  1.237340218118152
 ```
 
-Julia provides the ability to do calculations with multi-precision numbers, based on the MPFR software program, which is also used by R's *gmp* package. The `agm` function accepts these `Bigfloat` numbers.
+Julia provides the ability to do calculations with multi-precision numbers, based on the MPFR software program, which is also used by R's *Rmpfr* and *gmp* packages. The `agm` function accepts these `Bigfloat` numbers.
 
 ```r
 julia_command("b1 = BigFloat(1.0); b2 = BigFloat(2.0);")
@@ -352,7 +385,7 @@ julia_command("G = 1 / agm(b1, sqrt(b2), tol = 1e-50)")
 ##   930134903470024498273701036819927095195
 ```
 
-About 50 digits of this expression shall be correct. The question remains how these digits can be saved for further treatment in R. Assigning it to an R variable will loose will get those for 64-bit floats.
+About 50 digits of this expression shall be correct. The question remains how these digits can be saved for further treatment in R. Assigning it to an R variable will loose those digits when converting to 64-bit floats.
 
 
 ### Plotting Functions
@@ -364,7 +397,7 @@ About 50 digits of this expression shall be correct. The question remains how th
 
 ### Linear Algebra
 
-The *Moler matrix* is a symmetric mtrix with exactly one very small eigenvalue. It is well suited for testing eigenvalue computations. In R a Moler matrix of size `nxn` can be generated through the *pracma* function `moler(n)`. Let's try to find out its small eigenvalue for dimension `n=100`.
+The *Moler matrix* is a symmetric matrix with exactly one very small eigenvalue. It is well suited for testing eigenvalue computations. In R a Moler matrix of size `nxn` can be generated through the *pracma* function `moler(n)`. Let's try to find out its small eigenvalue for dimension `n=100`.
 
 ```r
 M <- pracma::moler(100)
@@ -395,14 +428,14 @@ Instead, we make use of the function with the same name from the *GenericLinearA
 ```r
     julia_command("using GenericLinearAlgebra;")
     
-    jl$assign("M", M)
-    jl$command("e = eigvals(Hermitian(big.(M)));")
+    julia_assign("M", M)
+    julia_command("e = eigvals(Hermitian(big.(M)));")
 
-    jl$command("println(e[1])")
+    julia_command("println(e[1])")
     ## 5.60071375007503416508581022876389348658607158043730...e-60
 ```
 
-This is really a small eigenvalue, especially compared to the other eigenvalues. We can see that the estimated eigenvalue above was exact up to 12 digits.
+This is really a small eigenvalue, especially compared to the other eigenvalues of this matrix. We can see that the estimated eigenvalue above (knowing the determinant of the Moler matrix) was exact up to 12 digits.
 
 
 ### Unconstrained Optimization
