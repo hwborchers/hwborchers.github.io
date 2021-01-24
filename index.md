@@ -1,3 +1,11 @@
+---
+title: "JuliaCall: Integrating R and Julia"
+author: "Hans W Borchers"
+date: "2021-01-24"
+output:
+  html_document:
+    toc: true
+---
 
 # JuliaCall: Integrating R and Julia
 
