@@ -20,7 +20,7 @@ Date: *2019-02-26*
 
 ### Julia Installation
 
-We assume the user has installed a newer version of R, such as R >= 3.5.1, and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.1.0 (as of January 2019) and can be downloaded from the Julia language home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
+We assume the user has installed a newer version of R, such as R >= 4.0.0 (April 2020), and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.5.3 (as of November 2020) and can be downloaded from the Julia language home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
 
 Some Julia packages will be needed. Though the `julia_setup` routine tries to install the necessary packages, it might be preferable to download and install some packages directly from Julia, and before Julia is called the first time from R.
 
