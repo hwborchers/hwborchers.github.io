@@ -43,11 +43,11 @@ There is also a help mode that can be raised by typing the question mark `?`.
 
 ```r
 # devtools::install_github("Non-Contradiction/JuliaCall")
-# JuliaCall | Version 0.16.4 (2019-2-17) | MIT + file LICENSE
+# JuliaCall | Version 0.17.2.9000 (2021-01-17) | MIT + file LICENSE
 
 library(JuliaCall)
 julia_setup()
-## Julia version 1.1.0 at location [...] will be used.
+## Julia version 1.5.3 at location /usr/bin will be used.
 ## Loading setup script for JuliaCall...
 ## Finish loading setup script for JuliaCall.
 ```
