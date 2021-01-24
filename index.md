@@ -1,19 +1,8 @@
----
-title: "JuliaCall: Integrating R and Julia"
-author: "Hans W Borchers"
-date: "2019-02-26"
-output:
-  html_document:
-    toc: TRUE
-    keep_md: true
-    df_print: paged
-  pdf_document:
-    keep_tex: true
----
 
-Title: **JuliaCall: Integrating R and Julia**  
-Author: *Hans W. Borchers, Duale Hochschule BW, Mannheim*  
-Date: *2019-02-26*
+# JuliaCall: Integrating R and Julia
+
+Author: Hans W. Borchers, *Duale Hochschule BW, Mannheim*  
+Date: *January 24, 2021*
 
 
 ## Introduction
@@ -30,7 +19,7 @@ Some Julia packages will be needed. Though the `julia_setup` routine tries to in
        _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
       | | | | | | |/ _` |  |
       | | |_| | | | (_| |  |  Version 1.1.0 (2019-01-21)
-     _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
+     _/ |\__'_|_|_|\__'_|  |
     |__/                   |
 
 After loading the *Pkg* package with `using Pkg`, the command `Pkg.add()` will download and install Julia packages (in the `.julia` subdirectory of your home directory) once, and `using <pkg>` will load these into the active session, just like `library()` in R. For instance, *RCall* will enable Julia to call R routines or get access to R objects.
