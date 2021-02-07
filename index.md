@@ -9,13 +9,13 @@ Date: *January 24, 2021*
 ### Contents
 
   * [Introduction](./index.md#Introduction)
-  * [Using JuliaCall](./index.md#)
-  * [Computing with JuliaCall(./index.md#)
-  * [Loading datasets(./index.md#)
-  * [Plotting functionality(./index.md#)
-  * [Application examples(./index.md#)
-  * [Differential equations(./index.md#)
-  * [Optimization and JuMP(./index.md#)
+  * [Using JuliaCall](./index.md#Using-JuliaCall)
+  * [Computing with JuliaCall](./index.md#Computing-with-JuliaCall)
+  * [Loading datasets](./index.md#)
+  * [Plotting functionality](./index.md#)
+  * [Application examples](./index.md#)
+  * [Differential equations](./index.md#)
+  * [Optimization and JuMP](./index.md#)
   * [Appendix](./index.md#Appendix)
 
 ----
