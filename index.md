@@ -538,7 +538,7 @@ A sometimes more convenient way to plot functions or display images is to leave 
 
 ----
 
-## Applications
+## Application examples
 
 ### Linear Algebra
 
