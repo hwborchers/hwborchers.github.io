@@ -8,14 +8,14 @@ Date: *January 24, 2021*
 
 ### Contents
 
-  * [Introduction](./index.md#Introduction)
-  * [Using JuliaCall](./index.md#Using-JuliaCall)
-  * [Computing with JuliaCall](./index.md#Computing-with-JuliaCall)
-  * [Loading datasets](./index.md#)
-  * [Plotting functionality](./index.md#)
-  * [Application examples](./index.md#)
-  * [Differential equations](./index.md#)
-  * [Optimization and JuMP](./index.md#)
+  * [Introduction](./index.md#introduction)
+  * [Using JuliaCall](./index.md#using-juliaCall)
+  * [Computing with JuliaCall](./index.md#computing-with-juliaCall)
+  * [Loading datasets](./index.md#loading-datasets)
+  * [Plotting functionality](./index.md#plotting-functionality)
+  * [Application examples](./index.md#application-examples)
+  * [Differential equations](./index.md#differential-equations)
+  * [Optimization and JuMP](./index.md#optimization-and-jump)
   * [Appendix](./index.md#Appendix)
 
 ----
@@ -788,7 +788,7 @@ For a list of solvers see the [ODE solvers](https://diffeq.sciml.ai/v2.0/solvers
 
 ----
 
-## Optimization
+## Optimization and JuMP
 
 ### The 'Optim' package
 
