@@ -903,13 +903,11 @@ grid()
 
 The pendulum swings back-and-forth with a frequency of about 2 seconds.
 
-For small values of `u` it holds that approximately `\sin(u) = u` and the differential equation reduces to `u'' = -g/L * u`, and we know the symbolic solution `u = sin(c1*t + c2)` . Considering the starting conditions, the approximate solution will be
-`u = pi/4 * sin(\sqrt(g/L) * t + pi/2)` .
+For small values of `u` it holds that approximately `sin(u) = u` and the differential equation reduces to `u'' = -g/L * u`, and we know the symbolic solution `u = sin(c1*t + c2)` . Considering the starting conditions, the approximate solution will be
+`u = pi/4 * sin(sqrt(g/L) * t + pi/2)` .
 This is plotted as a black, dotted line in the figure above.
 
 We can see that the approximate solution is oscillating slightly faster.
-
-
 
 ----
 
