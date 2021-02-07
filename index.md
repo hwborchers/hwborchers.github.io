@@ -16,7 +16,7 @@ Date: *January 24, 2021*
   * Application examples
   * Differential equations
   * Optimization and JuMP
-  * Appendix
+  * [Appendix](./index.md#Appendix)
 
 ----
 
