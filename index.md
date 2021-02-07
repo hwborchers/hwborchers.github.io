@@ -9,7 +9,7 @@ Date: *January 24, 2021*
 ### Contents
 
   * Introduction
-  * Installation and Usage
+  * Using JuliaCall
   * Computing with JuliaCall
   * Loading datasets
   * Plotting functionality
@@ -21,6 +21,8 @@ Date: *January 24, 2021*
 ----
 
 ## Introduction
+
+### Installing Julia
 
 We assume the user has installed a newer version of R, such as R >= 4.0.0 (April 2020), and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.5.3 (as of November 2020) and can be downloaded from the Julia language home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
 
@@ -51,17 +53,14 @@ To be used, *Pkg* itself needs to be loaded with `using Pkg`, and then type `Pkg
 
 There is also a help mode that can be raised by typing the question mark `?`.
 
-----
 
-## Installation and Usage
-
-### JuliaCall Installation
+### Installing JuliaCall
 
 *JuliaCall* is an R package, available on CRAN, by Changcheng Li. We would recommend to always install the newest version of *JuliaCall* from Github. The *devtools* R package provides the `install_github()` routine to do that for us if we know the name of the Github repository.
 
 ```r
 # devtools::install_github("Non-Contradiction/JuliaCall")
-# JuliaCall | Version 0.16.4 (2019-2-17) | MIT + file LICENSE
+# JuliaCall | Version 0.17.2.9000 (2021-01-17) | MIT + file LICENSE
 
 library(JuliaCall)
 julia_setup()
@@ -84,6 +83,9 @@ julia_setup()
 
 All commands in *JuliaCall* start with a `julia_` prefix. It is also possible to call these commands with a `jl$` prefix by assigning the setup command to the variable `jl` (or any other valid name) with `jl <- julia_setup()` -- if the user prefers that kind of style.
 
+----
+
+## Using JuliaCall
 
 ### Basic JuliaCall Commands
 
