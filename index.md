@@ -4,10 +4,23 @@
 Author: Hans W. Borchers, *Duale Hochschule BW, Mannheim*  
 Date: *January 24, 2021*
 
+----
+
+### Contents
+
+  * Introduction
+  * Installation and Usage
+  * Computing with JuliaCall
+  * Loading datasets
+  * Plotting functionality
+  * Application examples
+  * Differential equations
+  * Optimization and JuMP
+  * Appendix
+
+----
 
 ## Introduction
-
-### Julia Installation
 
 We assume the user has installed a newer version of R, such as R >= 4.0.0 (April 2020), and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.5.3 (as of November 2020) and can be downloaded from the Julia language home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
 
@@ -18,24 +31,29 @@ Some Julia packages will be needed. Though the `julia_setup` routine tries to in
       (_)     | (_) (_)    |
        _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
       | | | | | | |/ _` |  |
-      | | |_| | | | (_| |  |  Version 1.1.0 (2019-01-21)
+      | | |_| | | | (_| |  |  Version 1.5.3 (2020-11-09)
      _/ |\__'_|_|_|\__'_|  |
     |__/                   |
+    
+    julia>
 
 After loading the *Pkg* package with `using Pkg`, the command `Pkg.add()` will download and install Julia packages (in the `.julia` subdirectory of your home directory) once, and `using <pkg>` will load these into the active session, just like `library()` in R. For instance, *RCall* will enable Julia to call R routines or get access to R objects.
 
 To be used, *Pkg* itself needs to be loaded with `using Pkg`, and then type `Pkg.add("RCall")`. It is easier to apply the ']' operator that will change the console mode to accept package commands. This mode will be left by pressing the `<del>` key.
 
     julia> ]
-    (v1.1) pkg> add RCall
+    (v1.5) pkg> add RCall
     ## Updating ...
-    (v1.1) pkg> <del>
+    (v1.5) pkg> <del>
 
     julia> using RCall
     julia> ...
 
 There is also a help mode that can be raised by typing the question mark `?`.
 
+----
+
+## Installation and Usage
 
 ### JuliaCall Installation
 
@@ -43,10 +61,11 @@ There is also a help mode that can be raised by typing the question mark `?`.
 
 ```r
 # devtools::install_github("Non-Contradiction/JuliaCall")
-# JuliaCall | Version 0.17.2.9000 (2021-01-17) | MIT + file LICENSE
+# JuliaCall | Version 0.16.4 (2019-2-17) | MIT + file LICENSE
 
 library(JuliaCall)
 julia_setup()
+
 ## Julia version 1.5.3 at location /usr/bin will be used.
 ## Loading setup script for JuliaCall...
 ## Finish loading setup script for JuliaCall.
@@ -58,6 +77,7 @@ as an option or argument. The following code starts a JuliaPro installation from
 ```r
 options(JULIA_HOME = "<path-to-juliapro>/julia/bin")
 julia_setup()
+
 # or
 # julia_setup(JULIA_HOME = "<path-to-juliapro>/julia/bin")
 ```
@@ -80,9 +100,8 @@ To execute a Julia command use `julia_command`. It can run a series of Julia com
 
 ```r
 julia_command("a = sqrt(2.0)")
-## 1.4142135623730951
+## [1] 1.4142135623730951
 
-# or
 julia_command("a = sqrt(2.0);")   # no output printed
 ```
 
@@ -91,8 +110,7 @@ The Julia variable `a` will be generated and the Julia output of the last comman
 To get the value of a Julia variable back to R, use the `julia_eval` command. It will convert the value or Julia object to an R object and print it or assign it to an R variable.
 
 ```r
-a <- julia_eval("a = sqrt(2.0)")
-a
+julia_eval("a = sqrt(2.0)")
 ## [1] 1.414214
 ```
 
@@ -104,7 +122,7 @@ Finally, there is `julia_assign`, another useful operator. It takes an R object 
 
 ```r
 julia_assign("gamma", 0.57721566490153286)
-julia_command("bitstring(gamma")
+julia_command("bitstring(gamma)")
 ## "0011111111100010011110001000110011111100011011111011011000011001"
 ```
 
@@ -122,21 +140,22 @@ julia_console()
 ## It seems that you are not in the terminal.
 ## A simple julia console will be started.
 ## Type exit and then enter to exit.
+
 julia> a^2
 2.0000000000000004
 
 julia> e = exp(1);
-julia> exit
+julia> <cntrl-D>
 Exiting Julia console.
 ```
 
-`exit` returns control to the R command. Note again that in Julia the output of a command such as `e = exp(1)` is suppressed by appending a semicolon (as in MATLAB or Octave). `e` still exists and can be used in R.
+Exit with `<cntrl-D>` returns control to the R command. Note again that in Julia the output of a command such as `e = exp(1)` is suppressed by appending a semicolon (as in MATLAB or Octave). `e` still exists and can be used in R.
 
 ```r
 julia_exists("e")
 [1] TRUE
 
-e = julia_eval("e")
+e <- julia_eval("e")
 e
 ## [1] 2.718282
 ```
@@ -152,7 +171,7 @@ The user can start Julia and install and load packages. After restarting R and t
 # julia_install_package("Optim")            # julia> Pkg.add("Optim")
 # julia_install_package_if_needed("Optim")
 julia_installed_package("Optim")            # Optim version number
-## [1] "0.17.2"
+## [1] "1.2.0"
 julia_library("Optim")                      # julia> using Optim
 ```
 
@@ -197,10 +216,11 @@ The Julia complex number `1im` has been converted to the R representation `1i`. 
 
 In general, reading help for Julia functions through the `julia_help()` interface is not recommended as some of the formatting is lost and the help is difficult to read. Instead, read the newest documentation on [docs.julialang.org](https://docs.julialang.org/en/), or open a terminal where Julia runs and look at the help page there.
 
+----
 
 ## Computing With JuliaCall
 
-### Numbers, Vectors, and Matrices
+### Numbers, Vectors, Matrices
 
 We have already seen simple commands for interacting between R and Julia. `julia_eval()` and `julia_command()` evaluate a string containing a correct Julia expression and return the result to R. `julia_call()` accepts a Julia function name as string plus R variables and returns the result when applying the function in Julia. And `julia_assign` converts an R object and makes it accessible to Julia functions.
 
@@ -268,7 +288,7 @@ julia_eval("sin.(x)")
 [1] 0.000000e+00 7.071068e-01 1.000000e+00 1.224647e-16
 ```
 
-Here we use the Julia notation for explicitely generating a vector with `[...]`, a MATLAB-like notation, corresponding to R's `c(...)`. By the way, applying `sin.` with `julia_call` to an R vector will act in a vectorized way.
+Here we use the Julia notation for explicitly generating a vector with `[...]`, a MATLAB-like notation, corresponding to R's `c(...)`. By the way, applying `sin.` with `julia_call` to an R vector will act in a vectorized way.
 
 ```r
 julia_call("sin.", c(0, pi/4, pi/2, pi))
@@ -388,15 +408,133 @@ Julia provides the ability to do calculations with multi-precision numbers, base
 julia_command("b1 = BigFloat(1.0); b2 = BigFloat(2.0);")
 julia_command("G = 1 / agm(b1, sqrt(b2), tol = 1e-50)")
 ## 0.8346268416740731862814297327990468089939
-##   930134903470024498273701036819927095195
+##    930134903470024498273701036819927095195
 ```
 
 About 50 digits of this expression shall be correct. The question remains how these digits can be saved for further treatment in R. Assigning it to an R variable will loose those digits when converting to 64-bit floats.
 
+----
 
-### Plotting Functions
+## Loading datasets
+
+### Retrieve R datasets
+
+Many datasets known from R Base and packages are available through the [RDatasets](https://github.com/JuliaStats/RDatasets.jl) package in Julia. Most of the standard datasets in Base R as well as those included with popular R packages are available.
+
+`RDatasets.packages()` will show a table of R packages considered, and `RDatasets.datasets()` a table of the 700+ datasets included. The prefix `RDatasets` is needed as these functions are not exported (but `dataset` is).
+Pass in `RDatasets.datasets("HSAUR")` to receive a targeted table for the *HSAUR* package (first edition).
+
+```r
+julia_command("using DataFrames, RDatasets")  # julia_library(...)
+
+julia_command('planets = dataset("HSAUR", "planets");')
+julia_command('typeof(planets)')
+## DataFrame
+
+julia_command('head(planets)')
+```
+
+    6×3 DataFrame
+    │ Row │ Mass    │ Period  │ Eccen   │
+    │     │ Float64 │ Float64 │ Float64 │
+    ├─────┼─────────┼─────────┼─────────┤
+    │ 1   │ 0.12    │ 4.95    │ 0.0     │
+    │ 2   │ 0.197   │ 3.971   │ 0.0     │
+    │ 3   │ 0.21    │ 44.28   │ 0.34    │
+    │ 4   │ 0.22    │ 75.8    │ 0.28    │
+    │ 5   │ 0.23    │ 6.403   │ 0.08    │
+    │ 6   │ 0.25    │ 3.024   │ 0.02    │
 
 
+
+### CVS Files
+
+To read CSV files into Julia we utilize the [CSV]() package.
+
+```r
+julia_command('using CSV, DataFrames')
+julia_command('glass_csv = CSV.File("glass.csv");')
+julia_command('typeof(glass_csv)')
+## CSV.File{false}
+```
+
+The return type/class of `CSV.File()` is *not* a data frame, so we still have to convert it with the help of the [DataFrames]() package. Here we also introduce the *pipe*-operator of Julia.
+
+```r
+julia_command('glass_df = glass_csv |> DataFrame;')
+julia_command('typeof(glass_df)')
+## DataFrame
+```
+
+
+### Transfering dataframes
+
+To transfer the 'glass' data to R we simple use the `julia_eval()` function.
+
+```r
+glass <- julia_eval("glass_df")
+class(glass)
+## "data.frame"
+
+head(glass)
+```
+
+          row      RI    Na   Mg   Al    Si    K   Ca Ba   Fe Type
+    1   1 1.52101 13.64 4.49 1.10 71.78 0.06 8.75  0 0.00    1
+    2   2 1.51761 13.89 3.60 1.36 72.73 0.48 7.83  0 0.00    1
+    3   3 1.51618 13.53 3.55 1.54 72.99 0.39 7.78  0 0.00    1
+    4   4 1.51766 13.21 3.69 1.29 72.61 0.57 8.22  0 0.00    1
+    5   5 1.51742 13.27 3.62 1.24 73.08 0.55 8.07  0 0.00    1
+    6   6 1.51596 12.79 3.61 1.62 72.97 0.64 8.07  0 0.26    1
+
+And vice versa, to make an R dataframe be known in Julia we would use 
+`julia_assign("glass", glass)`. The `glass` variable in Julia then points to the data structure in R and can be handled as a `DataFrame` in Julia.
+
+----
+
+## Plotting Functionality
+
+### Using the 'Plots' package
+
+At the moment the behavior of Julia plotting routines through JuliaCall appears to be slightly different for the operating systems Windows, macOs, and Linux. I will shortly describe the Linux case. All this may not work for you if you are working with RStudio.
+
+We will utilize the Julia [Plots](https://docs.juliaplots.org/latest/) package that integrates several plotting packages under one common API. We have to prepare:
+
+```r
+julia_command('ENV["GKSwstype"] = "gksqt"')
+# plotsViewer()
+
+julia_command("using Plots")
+julia_command("gr()")         # or: gr(), plotly(), pyplot()
+```
+
+The `plotsViewer()` function should tell Julia to do two things for plots: the first is to save the image to some temporary place, and the second is to use R's or the operating system's browser to view the image. [Unfortunately, at the moment it is not working correctly on macOS.]
+
+Note that the `julia_command('ENV["GKSwstype"]="gksqt";')` activates the GKS QT backend, and may or may not be necessary. If it is necessary, it needs to be executed before loading the plotting library to take effect.
+
+```r
+julia_command("Plots.plot(Plots.fakedata(50,4),w=3)")
+# julia_command("gui()")
+```
+
+![**Figure 1** : Fakedata plot with GR](fakedata.png)
+
+This uses the [GR](https://gr-framework.org/) framework that is the default *backend* and can be reinstantiated with `gr()`. If no window pops up or is rendered in RStudio's viewer panel, the command `gui()` should open an external plotting window.
+
+The `plotly()` backend (see [Plotly](https://plotly.com/julia/)) may be easier to handle as it will open the plot in a browser of the operating system. Also `pyplot()` (see [PyPlot](https://github.com/JuliaPy/PyPlot.jl)) works quite well and renders in the viewer pane.
+(See [Backends](https://docs.juliaplots.org/latest/backends/) for more 'backends'.)
+
+
+### The 'Grammar of Graphics'
+
+The package [Gadfly](http://gadflyjl.org/stable/) implements 'Grammar of Graphics' plotting functionality for Julia, quite similar to what *ggplot2* does for R.
+
+
+### A Hybrid Approach
+
+A sometimes more convenient way to plot functions or display images is to leave the heavy computation to Julia, retrieve the calculated values or coordinates to R, and do the plotting with R's plot functions. This may be especially appropriate if the figure shall be rendered in the plots pane of RStudio.
+
+----
 
 ## Applications
 
@@ -443,7 +581,214 @@ Instead, we make use of the function with the same name from the *GenericLinearA
 This is really a small eigenvalue, especially compared to the other eigenvalues of this matrix. We can see that the estimated eigenvalue above (knowing the determinant of the Moler matrix) was exact up to 12 digits.
 
 
-### Unconstrained Optimization
+### Nonlinear Regression
+
+The following example is a well-known test example for nonlinear regression. The goal is to adapt the parameters of a model function to given data in a 'sum-of-squares' meaning.
+
+The radioactive radiation of a sample containing three different radioactive decay products is measured. The aim is to determine the half-lives and thus to uncover the different substances in the probe.
+
+```r
+#   Lanczos1 data (artificial data)
+#   f(x) = 0.0951*exp(-x) + 0.8607*exp(-3*x) + 1.5576*exp(-5*x)
+x <- seq(0, 1.15, length.out = 24)
+y <- c(2.51340000, 2.04433337, 1.66840444, 1.36641802, 1.12323249, 0.92688972,
+       0.76793386, 0.63887755, 0.53378353, 0.44793636, 0.37758479, 0.31973932,
+       0.27201308, 0.23249655, 0.19965895, 0.17227041, 0.14934057, 0.13007002,
+       0.11381193, 0.10004156, 0.08833209, 0.07833544, 0.06976694, 0.06239313)
+```
+
+For the data see Figure 3 below.
+
+We want to solve this using a Julia implementation of the Levenberg-Marquardt algorithm, available in the Julia package 'LsqFit'.
+
+```r
+julia_library("LsqFit")  # using LsqFit
+
+julia_assign("x", x)
+julia_assign("y", y)
+julia_assign("p0", c(1.0, 1.0, 1.0, 1.0, 1.0, 1.0))
+```
+
+The measurement data are now known within the Julia sub-process. We create the functional model (the sum of three independent decay functions) in Julia and call the nonlinear fitting procedure.
+
+```r
+julia_command(
+  "@. model(x, p) = p[1]*exp(-p[2]*x) + p[3]*exp(-p[4]*x) + p[5]*exp(-p[6]*x);")
+julia_command("fit = curve_fit(model, x, y, p0);")
+
+p = julia_eval("fit.param")
+```
+
+    [1] 0.86069977 2.99999779 1.55760080 4.99999966 0.09509943 0.99999658
+
+We see the half lives in `p[c(2,4,6)]` are about 3, 5, and 1.
+The data and the fitted model curve are shown in the following figure.
+
+![**Figure 3** : Nonlinear regression example](lanczos.png)
+
+How good the accuracy of this solution is can best be seen by calculating the "sum of squares" of the residuals.
+
+```r
+sum((p[1]*exp(-p[2]*x) + p[3]*exp(-p[4]*x) + p[5]*exp(-p[6]*x) - y)^2)
+```
+
+    [1] 1.230944e-16
+
+This is reasonably good and probably cannot be improved in "double float" arithmetic. However, NIST requires an accuracy of `1e-24` !
+
+
+
+### Automatic Differentiation
+
+*Automatic Differentiation* is a "technique to numerically compute the derivative of a function specified by a computer program". Julia provides several approaches (forward, backward, ...) to automatic differentiation. Of course, these approaches cannot be applied to functions not defined in Julia or C functions integrated into Julia.
+
+When we define a, maybe simple, function in R, then we can use this functionality in Julia and return results to R. As an example we will compute the exact hessian (within 64-bit floating point arithmetic) of the Rosenbrock function. For this we need to define this test function in Julia (by converting some R code).
+
+```r
+julia_command("# Rosenbrock function in Julia
+function rosen(x::Vector)
+    local n = length(x); local s = 0.0
+    for i = 1:length(x)-1
+        s += 100*(x[i+1] - x[i]^2)^2 + (x[i] - 1)^2
+    end
+    return s
+end")
+## rosen (generic function with 1 method)
+```
+
+We want to calculate the exact Hessian at $x = (0.95, 0.95, 0.95, 0.95)$ applying automatic forward differentiation. This is available as function `hessian` in the *ForwardDiff* package. Note that this package does not export its functions by intention, so we need to use the longer form `ForwardDiff.hessian`.
+
+```r
+julia_installed_package("ForwardDiff")
+## [1] "0.5.0"
+julia_library("ForwardDiff")
+H1 = julia_eval("ForwardDiff.hessian(rosen, 0.95*ones(4));")
+H1
+##      [,1] [,2] [,3] [,4]
+## [1,]  705 -380    0    0
+## [2,] -380  905 -380    0
+## [3,]    0 -380  905 -380
+## [4,]    0    0 -380  200
+```
+
+Let us compare this with the Hessian computed in R using the finite-difference approach such as in *numDeriv*. Actually, *numDeriv* refines the finite-difference result by applying a Richardson extrapolation, thus should be quite exact.
+
+```r
+fn = adagio::fnRosenbrock
+H2 = numDeriv::hessian(fn, rep(0.95, 4))
+H2
+##               [,1]          [,2]         [,3]          [,4]
+##[1,]  7.050000e+02 -3.800000e+02  2.57614e-14 -5.973871e-13
+##[2,] -3.800000e+02  9.050000e+02 -3.80000e+02  7.168344e-14
+##[3,]  2.576140e-14 -3.800000e+02  9.05000e+02 -3.800000e+02
+##[4,] -5.973871e-13  7.168344e-14 -3.80000e+02  2.000000e+02
+```
+
+The maximum deviation here is smaller than `1e-11`, but still we see that automatic differentiation returns an exact result within floating-point arithmetic.
+
+
+### Special Functions
+
+There are many special mathematical and physical functions that are not available in R, but have implementations in Julia. Other such special functions are present in R, but do not have sufficient accuracy (exactness in floating-point arithmetic). If such a special function is needed in high accuracy, Julia may come to help.
+
+For example, R has no function to call the Gamma function for complex numbers, but Julia has.
+
+```r
+z8 = exp(2*pi*1i/8)^(1:8)
+julia_assign("z8j", z8)
+julia_eval("gamma.(z8j)")
+## [1]  6.212488e-01-4.261265e-01i -1.549498e-01-4.980157e-01i
+## [3] -8.098552e-01+3.963701e-01i  0.000000e+00+2.251800e+15i
+## [5] -8.098552e-01-3.963701e-01i -1.549498e-01+4.980157e-01i
+## [7]  6.212488e-01+4.261265e-01i  1.000000e+00+0.000000e+00i
+```
+
+This computes the Gamma function on all eighth roots of unity.
+
+NB: The R package *pracma* contains function `gammaz` that also calculates the Gamma function for complex numbers. The Julia version is slightly more accurate.
+
+The Julia package *Combinatorics* provides many interesting numbers such as factorials, Fibonacci or Lucas numbers, etc. Because these numbers grow (almost) exponentially all these numbers are returned as BigFloats. To get them at least as strings in R, call the Julia `string` function on them.
+
+```r
+julia_library("Combinatorics")
+julia_command("N = Combinatorics.fibonaccinum(101);")
+N = julia_eval("string(N)")
+N
+[1] "573147844013817084101"
+```
+
+Here we compute the 101th Fibonacci number. This number is too big to be representable as an integer in R, therefore we return it as a string. With the *gmp* R package we can convert this number into a big integer and find its prime factors.
+
+```r
+require(gmp)
+factorize(as.bigz(N))
+## Big Integer ('bigz') object of length 2:
+## [1] 743519377    770857978613
+```
+
+Of course, factorization can also be done in Julia after loading the *Primes* package, with `julia_eval("factor(BigInt(N))")`.
+
+----
+
+## Differential Equations
+
+Julia is extremely strong in the area of Differential Equations (DE), due mostly to Chris Rakaukas and his [DifferentialEquations](https://diffeq.sciml.ai/v2.0/) package. Its documentation is almost a textbook on all types of differential equations, and is recommended to all people interested in solving differential equations numerically.
+
+One could apply JuliaCall to solve differential equations through this interface. Instead Chris has provided the R package [diffeqr](https://cran.r-project.org/package=diffeqr) that makes use of JuliaCall, but provides a nicer way of solving differential equations by employing the Julia package. When getting installed, this package imports JuliaCall anyway. Precompiling the package may take a few moments.
+
+```r
+# library(diffeqr)
+de <- diffeqr::diffeq_setup()
+```
+
+
+### ODEs (Ordinary DEs)
+
+To solve a differential equation $y' = f(t,y)$ one has to define the function $f$, an initial condition $y_0$, and a time span $[t_0, t_1]$ to solve over. The result will be a vector (or matrix) of function values $y$ at certain time points $t$ in the interval.
+
+We will look at a simple example. The following equation $y^2 - y^3$ describes the flaring of a spark until it burns in a stable flame. $y^3$ is the volume in which oxygen gets burnt, and $y^2$ is proportional to the surface through which new oxygen can flow into the flame.
+
+```r
+f <- function(u, p, t) p[1]*u^2 - p[2]*u^3
+p <- c(1.0, 2.0)
+u0 <- 1/250             # initializing flare, in cm
+tspan <- c(0.0, 500)    # time span in milliseconds
+
+# Define and solve the DE problem
+prob <- de$ODEProblem(f, u0, tspan, p)
+sol  <- de$solve(prob, de$Tsit5(), reltol = 1e-08,
+                 saveat=seq(0, 500, by=2.5))
+```
+
+Here $p$ is a (set of) parameter(s) to adapt the defining function $f$ to different situations. In `de$ODEProblem` it can be left off, in `f` not, but need not be used in the function body.
+
+Now we can plot the solution (in R). The time (the independent variable) is stored in `sol$t`, the dependent values in `sol$u` (and always named `u`).
+
+```r
+par(mar=c(2,2,2,1))
+plot(sol$t, sol$u, type='l', col=2, lwd=2,
+     main = "Flaring of a spark into a burning flame")
+grid()
+```
+
+![**Figure 2** : Spark to flame example](spark.png)
+
+We can see how the spark develops for some time before it burst suddenly into a flame and gets stable within a very short time period. 
+
+`saveat` tells the solver, at which points to return solution values. For more information, for instance about how to involve `reltol` and `abstol`, see the vignettes of the *diffeqr* package. `Tsit5` is the default solver for non-stiff ODE problems, for stiff problems the `Rosenbrock23` solver is recommended.
+
+For a list of solvers see the [ODE solvers](https://diffeq.sciml.ai/v2.0/solvers/ode_solve.html) page of the *DifferentialEquations* documentation. A selected solver like `Tsit5` will be called with `sol = de$solve(prob,de$Tsit5())`.
+
+
+### Systems of equations
+
+### ODEs of second order
+
+----
+
+## Optimization
+
+### The 'Optim' package
 
 Minimize the Rosenbrock function in 10 dimensions. This test function is, e.g., defined in the *adagio* package, together with its exact gradient function. The starting point shall be $x0 = (0.01, \ldots , 0.01)$.
 
@@ -509,98 +854,7 @@ xmin
 Because no gradient is supplied, the gradient is automatically computed applying the central-difference formula. Most of the time this is sufficient for getting good results.
 
 
-### Automatic Differentiation
-
-*Automatic Differentiation* is a "technique to numerically compute the derivative of a function specified by a computer program". Julia provides several approaches (forward, backward, ...) to automatic differentiation. Of course, these approaches cannot be applied to functions not defined in Julia or C functions integrated into Julia.
-
-When we define a, maybe simple, function in R, then we can use this functionality in Julia and return results to R. As an example we will compute the exact hessian (within 64-bit floating point arithmetic) of the Rosenbrock function. For this we need to define this test function in Julia (by converting some R code).
-
-```r
-julia_command("# Rosenbrock function in Julia
-function rosen(x::Vector)
-    local n = length(x); local s = 0.0
-    for i = 1:length(x)-1
-        s += 100*(x[i+1] - x[i]^2)^2 + (x[i] - 1)^2
-    end
-    return s
-end")
-## rosen (generic function with 1 method)
-```
-
-We want to calculate the exact Hessian at $x = (0.95, 0.95, 0.95, 0.95)$ applying automatic forward differentiation. This is available as function `hessian` in the *ForwardDiff* package. Note that this package does not export its functions by intention, so we need to use the longer form `ForwardDiff.hessian`.
-
-```r
-julia_installed_package("ForwardDiff")
-## [1] "0.5.0"
-julia_library("ForwardDiff")
-H1 = julia_eval("ForwardDiff.hessian(rosen, 0.95*ones(4));")
-H1
-##      [,1] [,2] [,3] [,4]
-## [1,]  705 -380    0    0
-## [2,] -380  905 -380    0
-## [3,]    0 -380  905 -380
-## [4,]    0    0 -380  200
-```
-
-Let us compare this with the Hessian computed in R using the finite-difference approach such as in *numDeriv*. Actually, *numDeriv* refines the finite-difference result by applying a Richardson extrapolation, thus should be quite exact.
-
-```r
-fn = adagio::fnRosenbrock
-H2 = numDeriv::hessian(fn, rep(0.95, 4))
-H2
-##               [,1]          [,2]         [,3]          [,4]
-##[1,]  7.050000e+02 -3.800000e+02  2.57614e-14 -5.973871e-13
-##[2,] -3.800000e+02  9.050000e+02 -3.80000e+02  7.168344e-14
-##[3,]  2.576140e-14 -3.800000e+02  9.05000e+02 -3.800000e+02
-##[4,] -5.973871e-13  7.168344e-14 -3.80000e+02  2.000000e+02
-```
-
-The maximum deviation here is smaller than `1e-11`, but still we see that automatic differentiation returns an exact result within floating-point arithmetic.
-
-
-### Special Functions and Numbers
-
-There are many special mathematical and physical functions that are not available in R, but have implementations in Julia. Other such special functions are present in R, but do not have sufficient accuracy (exactness in floating-point arithmetic). If such a special function is needed in high accuracy, Julia may come to help.
-
-For example, R has no function to call the Gamma function for complex numbers, but Julia has.
-
-```r
-z8 = exp(2*pi*1i/8)^(1:8)
-julia_assign("z8j", z8)
-julia_eval("gamma.(z8j)")
-## [1]  6.212488e-01-4.261265e-01i -1.549498e-01-4.980157e-01i
-## [3] -8.098552e-01+3.963701e-01i  0.000000e+00+2.251800e+15i
-## [5] -8.098552e-01-3.963701e-01i -1.549498e-01+4.980157e-01i
-## [7]  6.212488e-01+4.261265e-01i  1.000000e+00+0.000000e+00i
-```
-
-This computes the Gamma function on all eighth roots of unity.
-
-NB: The R package *pracma* contains function `gammaz` that also calculates the Gamma function for complex numbers. The Julia version is slightly more accurate.
-
-The Julia package *Combinatorics* provides many interesting numbers such as factorials, Fibonacci or Lucas numbers, etc. Because these numbers grow (almost) exponentially all these numbers are returned as BigFloats. To get them at least as strings in R, call the Julia `string` function on them.
-
-```r
-julia_library("Combinatorics")
-julia_command("N = Combinatorics.fibonaccinum(101);")
-N = julia_eval("string(N)")
-N
-[1] "573147844013817084101"
-```
-
-Here we compute the 101th Fibonacci number. This number is too big to be representable as an integer in R, therefore we return it as a string. With the *gmp* R package we can convert this number into a big integer and find its prime factors.
-
-```r
-require(gmp)
-factorize(as.bigz(N))
-## Big Integer ('bigz') object of length 2:
-## [1] 743519377    770857978613
-```
-
-Of course, factorization can also be done in Julia after loading the *Primes* package, with `julia_eval("factor(BigInt(N))")`.
-
-
-### Optimization Modeling: *JuMP* and *Ipopt*
+### Using 'JuMP' and 'Ipopt'
 
 Task: Minimize the Rosenbrock function in 10 dimensions with constraints `0 <= x[i] <= 0.5`.
 
@@ -668,10 +922,11 @@ julia_eval("getvalue(x)")
 ```
 
 
-### Differential Equations Solving
+### Constraits: The 'NLopt' package
 
+----
 
-## System Specifics
+## Appendix
 
 ### Timing
 
@@ -747,4 +1002,9 @@ system.time( for (i in 1:100) julia_call("trapz", xx, yy) )
 ```
 
 The overhead is considerable which was to be expected.
+
+
+### Links and References
+
+----
 
