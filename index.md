@@ -800,8 +800,8 @@ We define a function that returns the two derivatives:
 
 ```r
 f <- function(u, p, t) {
-    du1 <- p1 * u[1] + p2 * u[1] * u[2]
-    du2 <- p3 * u[2] + p4 * u[1] * u[2]
+    du1 <- p[1] * u[1] + p[2] * u[1] * u[2]
+    du2 <- p[3] * u[2] + p[4] * u[1] * u[2]
     return( c(du1, du2) )
 }
 ```
@@ -809,8 +809,9 @@ f <- function(u, p, t) {
 with parameters `p1, ..., p4` and time span `[0, 240]` (of weeks or months, for example) and an initial population of `y0 <- c(50, 15)` (in thousands, say).
 
 ```r
-p1 <-  0.1;  p2 <- -0.01 
-p3 <- -0.05; p4 <-  0.001
+# p1 <-  0.1;  p2 <- -0.01 
+# p3 <- -0.05; p4 <-  0.001
+p <- c(0.1, -0.01, -0.05, 0.001)
 u0 <- c(50, 15)
 tspan <- c(0, 240)
 ```
@@ -820,7 +821,7 @@ We assign the time point at which a solution shall be returned (to make the plot
 ```
 t <- seq(0, 240, by=2)
 
-prob <- de$ODEProblem(f, u0, tspan)
+prob <- de$ODEProblem(f, u0, tspan, p)
 sol <- de$solve(prob, rel.tol = 1e-08, saveat = t)
 
 # Convert Julia object into an R matrix
