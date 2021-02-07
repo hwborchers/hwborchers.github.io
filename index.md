@@ -748,9 +748,9 @@ de <- diffeqr::diffeq_setup()
 
 ### ODEs (Ordinary DEs)
 
-To solve a differential equation $y' = f(t,y)$ one has to define the function $f$, an initial condition $y_0$, and a time span $[t_0, t_e]$ to solve over. The result will be a vector (or matrix) of function values $y$ at certain time points $t$ in the interval.
+To solve a differential equation `y' = f(t,y)` one has to define the function `f`, an initial condition `y0`, and a time span `[t0, te]` to solve over. The result will be a vector (or matrix) of function values `y` at certain time points `t` in the interval.
 
-We will look at a simple example. The following equation $y' = y^2 - y^3$ describes the flaring of a spark until it burns in a stable flame. $y^3$ is the volume in which oxygen gets burnt, and $y^2$ is proportional to the surface through which new oxygen can flow into the flame.
+We will look at a simple example. The following equation `y' = y^2 - y^3` describes the flaring of a spark until it burns in a stable flame. `y^3` is the volume in which oxygen gets burnt, and `y^2` is proportional to the surface through which new oxygen can flow into the flame.
 
 ```r
 f <- function(u, p, t) p[1]*u^2 - p[2]*u^3
@@ -764,7 +764,7 @@ sol  <- de$solve(prob, de$Tsit5(), reltol = 1e-08,
                  saveat=seq(0, 500, by=2.5))
 ```
 
-Here $p$ is a (set of) parameter(s) to adapt the defining function $f$ to different situations. In `de$ODEProblem` it can be left off, in `f` not, but need not be used in the function body.
+Here `p` is a (set of) parameter(s) to adapt the defining function `f` to different situations. In `de$ODEProblem` it can be left off, in `f` not, but need not be used in the function body.
 
 Now we can plot the solution (in R). The time (the independent variable) is stored in `sol$t`, the dependent values in `sol$u` (and always named `u`).
 
@@ -790,14 +790,10 @@ The **Lotka-Volterra** equations attempt to describe the dynamics of biological 
 
 The model consists of two intermingled differential equations of first order.
 
-$$
-  y1' = p_1 \, y_1 + p_2 \, y_1 y_2
-$$
-$$
-  y2' = p_3 \, y_2 + p_4 \, y_1 y_2
-$$
+    y1' = p1 * y1 + p2 * y1 * y2
+    y2' = p3 * y2 + p4 * y1 * y2
 
-Here $y_1$ is the number of prey ('rabbits'), $y_2$ the number of predators ('foxes'). The coefficients characterize the interaction between the two species. For instance, $p_3$ should be negative as the predator will die out if there is no prey.
+Here `y1` is the number of prey ('rabbits'), `y2` the number of predators ('foxes'). The coefficients characterize the interaction between the two species. For instance, `p3` should be negative as the predator will die out if there is no prey.
 
 
 We define a function that returns the two derivatives:
@@ -851,19 +847,17 @@ The green line displays prey figures, the red line the predators. Both species d
 
 ### Second-order Differential Equations
 
-Differential Equations of second order, $y'' = f(t, y, y')$, cannot be solved directly, instead we solve them as a system of two first order equations with $y_1 = y, y_2 = y'$, rewritng the above equation as
-$$
-  y_1' = y_2
-$$
-$$
-  y_2' = f(t, y_1, y_2)
-$$
+Differential Equations of second order, `y'' = f(t, y, y')`, cannot be solved directly, instead we solve them as a system of two first order equations with `y1 = y, y2 = y'`, rewritng the above equation as
+
+    y1' = y2
+    y2' = f(t, y1, y2)
+
 
 As an example, we look at a (mathematical) pendulum. Newtonian Physics tell us that the pendulum swings according to the equation
-$$
-  \frac{d^2 u}{dt^2} = - \frac{g}{L} \sin(u)
-$$
-where $g$ is the gravity acceleration (on earth), $L$ the length of the pendulum, and $u$ the elongation from the vertical direction.
+
+    u'' = -g/L * sin(u)
+
+where `g` is the gravity acceleration (on earth), `L` the length of the pendulum, and `u` the elongation from the vertical direction.
 
 ```r
 g <- 9.81  # [m/s^2]
@@ -909,8 +903,8 @@ grid()
 
 The pendulum swings back-and-forth with a frequency of about 2 seconds.
 
-For small values of $u$ it holds that $\sin(u) \approx u$ and the differential equation reduces to $u'' = -g/L \, u$, and we know the symbolic solution $u = \sin(c_1 t + c_2)$ . Considering the starting conditions, the approximate solution will be
-$u = \pi/4\, sin(\sqrt{g/L} \cdot t + \pi/2)$ .
+For small values of `u` it holds that approximately `\sin(u) = u` and the differential equation reduces to `u'' = -g/L * u`, and we know the symbolic solution `u = sin(c1*t + c2)` . Considering the starting conditions, the approximate solution will be
+`u = pi/4 * sin(\sqrt(g/L) * t + pi/2)` .
 This is plotted as a black, dotted line in the figure above.
 
 We can see that the approximate solution is oscillating slightly faster.
