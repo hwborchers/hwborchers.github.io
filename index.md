@@ -2,7 +2,7 @@
 # JuliaCall: Integrating R and Julia
 
 Author: Hans W. Borchers, *Duale Hochschule BW, Mannheim*  
-Date: *January 24, 2021*
+Date: *January 24, 2023*
 
 ----
 
@@ -24,7 +24,7 @@ Date: *January 24, 2021*
 
 ### Installing Julia
 
-We assume the user has installed a newer version of R, such as R >= 4.0.0 (April 2020), and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.5.3 (as of November 2020) and can be downloaded from the Julia language home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
+We assume the user has installed a newer version of R, such as R >= 4.2.2 (2022-10-31), and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.8.5 (as of January 8, 2023) and can be downloaded from the Julia language home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
 
 Some Julia packages will be needed. Though the `julia_setup` routine tries to install the necessary packages, it might be preferable to download and install some packages directly from Julia, and before Julia is called the first time from R.
 
@@ -33,8 +33,8 @@ Some Julia packages will be needed. Though the `julia_setup` routine tries to in
       (_)     | (_) (_)    |
        _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
       | | | | | | |/ _` |  |
-      | | |_| | | | (_| |  |  Version 1.5.3 (2020-11-09)
-     _/ |\__'_|_|_|\__'_|  |
+      | | |_| | | | (_| |  |  Version 1.8.5 (2023-01-08)
+     _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
     |__/                   |
     
     julia>
@@ -44,14 +44,14 @@ After loading the *Pkg* package with `using Pkg`, the command `Pkg.add()` will d
 To be used, *Pkg* itself needs to be loaded with `using Pkg`, and then type `Pkg.add("RCall")`. It is easier to apply the ']' operator that will change the console mode to accept package commands. This mode will be left by pressing the `<del>` key.
 
     julia> ]
-    (v1.5) pkg> add RCall
+    (@v1.8) pkg> add RCall
     ## Updating ...
-    (v1.5) pkg> <del>
+    (@v1.8) pkg> <del>
 
     julia> using RCall
     julia> ...
 
-There is also a help mode that can be raised by typing the question mark `?`.
+There is also a help mode that can be raised by typing the question mark `?`. (This works in 'package mode' as well, that is with 'pkg> ?'.)
 
 
 ### Installing JuliaCall
@@ -60,25 +60,24 @@ There is also a help mode that can be raised by typing the question mark `?`.
 
 ```r
 # devtools::install_github("Non-Contradiction/JuliaCall")
-# JuliaCall | Version 0.17.2.9000 (2021-01-17) | MIT + file LICENSE
+# JuliaCall | Version 0.17.5 (2021-01-17) | MIT + file LICENSE
 
 library(JuliaCall)
 julia_setup()
-
-## Julia version 1.5.3 at location /usr/bin will be used.
-## Loading setup script for JuliaCall...
-## Finish loading setup script for JuliaCall.
 ```
 
-This only works if the `julia` command is defined in your path. The path, e.g., to a different Julia version can be added to `julia_setup()`
-as an option or argument. The following code starts a JuliaPro installation from **JuliaComputing** instead of Julia from **julialang.org**.
+This only works if the `julia` command is defined in your path. The path, e.g., to a different Julia version can be added to `julia_setup()` as an option or argument. The following code starts a Julia installation at a different location.
 
 ```r
-options(JULIA_HOME = "<path-to-juliapro>/julia/bin")
+options(JULIA_HOME = "~/Programs/julia-1.8.5/bin/")
 julia_setup()
 
+## Julia version 1.8.5 at location ~/Programs/julia-1.8.5/bin will be used.
+## Loading setup script for JuliaCall...
+## Finish loading setup script for JuliaCall.
+
 # or
-# julia_setup(JULIA_HOME = "<path-to-juliapro>/julia/bin")
+# julia_setup(JULIA_HOME = "~/Programs/julia-1.8.5/bin/")
 ```
 
 All commands in *JuliaCall* start with a `julia_` prefix. It is also possible to call these commands with a `jl$` prefix by assigning the setup command to the variable `jl` (or any other valid name) with `jl <- julia_setup()` -- if the user prefers that kind of style.
