@@ -60,7 +60,7 @@ There is also a help mode that can be raised by typing the question mark `?`. (T
 
 ```r
 # devtools::install_github("Non-Contradiction/JuliaCall")
-# JuliaCall | Version 0.17.5 (2021-01-17) | MIT + file LICENSE
+# JuliaCall | Version 0.17.5 (2022-09-08) | MIT + file LICENSE
 
 library(JuliaCall)
 julia_setup()
