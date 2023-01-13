@@ -172,7 +172,7 @@ The user can start Julia and install and load packages. After restarting R and t
 # julia_install_package("Optim")            # julia> Pkg.add("Optim")
 # julia_install_package_if_needed("Optim")
 julia_installed_package("Optim")            # Optim version number
-## [1] "1.2.0"
+## [1] "1.7.4"                              # latest update 2022
 julia_library("Optim")                      # julia> using Optim
 ```
 
@@ -184,13 +184,13 @@ Some packages worth looking at are:
 
   - **Plots** for visualization and data analysis;
   - **DifferentialEquations** with high-performance solvers for differential equations;
-  - **ForwardDiff** providing Automatic Differentiation (AD) in Julia;
+  - **Zygote** or **Enzyme** providing Automatic Differentiation (AD) in Julia;
   - **JuMP**, a modeling language for mathematical optimization;
   - **Image**, an image processing library;
   - **GLM** for generalized and linear models; or
   - **DataFrames** for working with tabular data.
 
-The **GR** package provides a framework, based on the "Grammar of Graphics", for visualisation applications. Several packages exist for deep learning (**Mocha**, **Flux**, **Knet**, **MXNet**, **TensorFlow**, etc.). See the [Julia Observer](https://juliaobserver.com/packages/) for some of the highest-ranked packages, listed by categories.
+The **GR** package provides a framework, based on the "Grammar of Graphics", for visualisation applications. Several packages exist for deep learning (**Mocha**, **Flux**, **Knet**, **MXNet**, **TensorFlow**, etc.). See the [Julia Packages](https://juliapackages.com/) for some of the highest-ranked packages, listed by categories.
 
 
 ### Getting Help
