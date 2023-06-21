@@ -2,7 +2,7 @@
 # JuliaCall: Integrating R and Julia
 
 Author: Hans W. Borchers, *Duale Hochschule BW, Mannheim*  
-Date: *January 24, 2023*
+Date: *June 20, 2023*
 
 ----
 
@@ -24,7 +24,7 @@ Date: *January 24, 2023*
 
 ### Installing Julia
 
-We assume the user has installed a newer version of R, such as R >= 4.2.2 (2022-10-31), and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.8.5 (as of January 8, 2023) and can be downloaded from the Julia language home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
+We assume the user has installed a newer version of R, such as R >= 4.3.1 (2023-06-16), and knows how to install R packages. Besides that, the user shall install Julia by himself. The latest stable version is Julia 1.9.1 (as of June 7, 2023) and can be downloaded from the Julia language home page [julialang.org](https://julialang.org/) for the major operating systems Windows, macOS, and Linux.
 
 Some Julia packages will be needed. Though the `julia_setup` routine tries to install the necessary packages, it might be preferable to download and install some packages directly from Julia, and before Julia is called the first time from R.
 
@@ -33,7 +33,7 @@ Some Julia packages will be needed. Though the `julia_setup` routine tries to in
       (_)     | (_) (_)    |
        _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
       | | | | | | |/ _` |  |
-      | | |_| | | | (_| |  |  Version 1.8.5 (2023-01-08)
+      | | |_| | | | (_| |  |  Version 1.9.1 (2023-06-07)
      _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
     |__/                   |
     
