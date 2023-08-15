@@ -16,7 +16,6 @@ Date: *June 20, 2023*
   * [Application examples](#application-examples)
   * [Differential equations](#differential-equations)
   * [Optimization and JuMP](#optimization-and-jump)
-  * [Appendix](#appendix)
 
 ----
 
