@@ -8,15 +8,15 @@ Date: *June 20, 2023*
 
 #### Contents
 
-  * [Introduction](./index.md#introduction)
-  * [Using JuliaCall](./index.md#using-juliaCall)
-  * [Computing with JuliaCall](./index.md#computing-with-juliaCall)
-  * [Loading datasets](./index.md#loading-datasets)
-  * [Plotting functionality](./index.md#plotting-functionality)
-  * [Application examples](./index.md#application-examples)
-  * [Differential equations](./index.md#differential-equations)
-  * [Optimization and JuMP](./index.md#optimization-and-jump)
-  * [Appendix](./index.md#Appendix)
+  * [Introduction](#introduction)
+  * [Using JuliaCall](#using-juliaCall)
+  * [Computing with JuliaCall](#computing-with-juliaCall)
+  * [Loading datasets](#loading-datasets)
+  * [Plotting functionality](#plotting-functionality)
+  * [Application examples](#application-examples)
+  * [Differential equations](#differential-equations)
+  * [Optimization and JuMP](#optimization-and-jump)
+  * [Appendix](#appendix)
 
 ----
 
