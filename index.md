@@ -9,8 +9,8 @@ Date: *June 20, 2023*
 #### Contents
 
   * [Introduction](#introduction)
-  * [Using JuliaCall](#using-juliaCall)
-  * [Computing with JuliaCall](#computing-with-juliaCall)
+  * [Using JuliaCall](#using-juliacall)
+  * [Computing with JuliaCall](#computing-with-juliacall)
   * [Loading datasets](#loading-datasets)
   * [Plotting functionality](#plotting-functionality)
   * [Application examples](#application-examples)
