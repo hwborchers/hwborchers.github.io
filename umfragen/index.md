@@ -1,5 +1,8 @@
 # Sonntagsfrage
 
+Author: Hans W. Borchers, *Duale Hochschule BW, Mannheim*  
+Date: *January 2024*
+
 ## Umfragen 2020-2024
 
 ### Einführung
