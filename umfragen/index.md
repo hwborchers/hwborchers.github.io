@@ -1,27 +1,4 @@
----
-title: Sonntagsfrage
-author: H.W. Borchers
-date: 2024-01-12
-format:
-  html:
-    # minimal: true
-    toc: true
-    toc-location: right
-    toc-depth: 3
-    anchor-sections: true
-    number-sections: false
-    code-fold: true
-    html-math-method: katex
-    embed-resources: false
-    keep-md: true
-    fig-width: 6
-    fig-height: 4
-    theme:
-      light: flatly
-      dark: solar
----
-
-
+# Sonntagsfrage
 
 ## Umfragen 2020-2024
 
