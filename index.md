@@ -1046,7 +1046,7 @@ julia_eval("getvalue(x)")
 ```
 
 
-### Constraits: The 'NLopt' package
+### Constraints: The 'NLopt' package
 
 ----
 
