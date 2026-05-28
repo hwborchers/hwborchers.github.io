@@ -1,8 +1,3 @@
----
-layout: post
-title: Convex Reformulations
-categories: optimize
----
 
   <script type="text/javascript" defer
     src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js">
