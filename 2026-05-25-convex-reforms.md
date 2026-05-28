@@ -30,4 +30,4 @@ $$
 \end{aligned}
 $$
 
-**Why is this not convex?**. Even though the numerator and denominator are both linear (and therefore convex), their *ratio* is not. If you calculate the Hessian (the matrix of second derivatives) of $f(x)$, you will find that it is indefinite—meaning the function curves upwards in some directions and downwards in others. Its level sets are hyperbolas, not convex ellipsoids. A standard convex solver like CVX will reject this.
+**Why is this not convex?**. Even though the numerator and denominator are both linear (and therefore convex), their *ratio* is not. If you calculate the Hessian (the matrix of second derivatives) of $$f(x)$$, you will find that it is indefinite—meaning the function curves upwards in some directions and downwards in others. Its level sets are hyperbolas, not convex ellipsoids. A standard convex solver like CVX will reject this.
