@@ -19,6 +19,8 @@ Date: *June 20, 2023*
 
 ----
 
+[Convex Reformulations](2026-05-25-convex-reforms.md)
+
 ## Introduction
 
 ### Installing Julia
